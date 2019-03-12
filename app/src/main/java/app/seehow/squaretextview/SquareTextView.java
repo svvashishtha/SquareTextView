@@ -13,7 +13,7 @@ public class SquareTextView extends AppCompatTextView {
     private static final float DEFAULT_RADIUS_VALUE = 8;
     RectF rect;
     Paint paint;
-    int backgroundColor;
+    int backgroundColor = Color.TRANSPARENT;
     float radius;
     int max = -1;
 
@@ -52,21 +52,31 @@ public class SquareTextView extends AppCompatTextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (max == -1) {
-            max = Math.max(getWidth(), getHeight());
-            setWidth(max);
-            setHeight(max);
-
-            rect.bottom = max;
-            rect.right = max;
-            canvas.drawRoundRect(rect, radius, radius, paint);
-        }
+        canvas.drawRoundRect(rect, radius, radius, paint);
         super.onDraw(canvas);
+
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        max = Math.max(getMeasuredWidth(), getMeasuredHeight());
+        rect.bottom = max;
+        rect.right = max;
+        setMeasuredDimension(max, max);
+
     }
 
     @Override
     public void setBackgroundColor(int backgroundColor) {
         this.backgroundColor = backgroundColor;
+        paint.setColor(backgroundColor);
+        invalidate();
+        requestLayout();
+    }
+
+    public void setCornerRadius(int radiusInpx) {
+        radius = radiusInpx * getContext().getResources().getDisplayMetrics().density;
         invalidate();
         requestLayout();
     }
